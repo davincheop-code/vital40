@@ -29,6 +29,71 @@ function savePlan() { localStorage.setItem(STORAGE.plan, JSON.stringify(state.pl
 function saveHistory() { localStorage.setItem(STORAGE.history, JSON.stringify(state.history)); }
 function saveNextDay() { localStorage.setItem(STORAGE.nextDay, String(state.nextDayIndex)); }
 
+/* ---------------- COMPARTIR / COPIAR RUTINA ENTRE DISPOSITIVOS ----------------
+   Como la app no tiene servidor, "copiar" una rutina a otro celular se hace
+   codificando el perfil + la rutina exacta (por id de ejercicio, no el objeto
+   completo, para que el link no sea gigante) en la URL. Al abrir ese link una
+   vez, el otro dispositivo guarda esa rutina en su propio almacenamiento local
+   y listo — a partir de ahí funciona 100% offline igual que siempre. */
+
+function toBase64Unicode(str) { return btoa(unescape(encodeURIComponent(str))); }
+function fromBase64Unicode(str) { return decodeURIComponent(escape(atob(str))); }
+
+function compactPlan(plan) {
+  return {
+    createdAt: plan.createdAt,
+    days: plan.days.map((d) => ({
+      day: d.day, type: d.type, label: d.label,
+      warmup: d.warmup.map((e) => e.id),
+      main: d.main.map((e) => ({ id: e.id, sets: e.sets, reps: e.reps, rest: e.rest })),
+      cooldown: d.cooldown.map((e) => e.id),
+    })),
+  };
+}
+
+function expandPlan(compact) {
+  const byId = {};
+  EXERCISES.forEach((e) => { byId[e.id] = e; });
+  return {
+    createdAt: compact.createdAt,
+    days: compact.days.map((d) => ({
+      day: d.day, type: d.type, label: d.label,
+      warmup: d.warmup.map((id) => byId[id]).filter(Boolean),
+      main: d.main.map((m) => (byId[m.id] ? { ...byId[m.id], sets: m.sets, reps: m.reps, rest: m.rest } : null)).filter(Boolean),
+      cooldown: d.cooldown.map((id) => byId[id]).filter(Boolean),
+    })),
+  };
+}
+
+function buildShareLink() {
+  const payload = { profile: state.profile, plan: compactPlan(state.plan) };
+  const encoded = toBase64Unicode(JSON.stringify(payload));
+  const url = new URL(location.href);
+  url.search = "";
+  url.hash = "";
+  return `${url.toString()}?s=${encodeURIComponent(encoded)}`;
+}
+
+function tryLoadSharedRoutine() {
+  const params = new URLSearchParams(location.search);
+  const s = params.get("s");
+  if (!s) return false;
+  try {
+    const payload = JSON.parse(fromBase64Unicode(s));
+    if (!payload.profile || !payload.plan) return false;
+    state.profile = payload.profile;
+    saveProfile();
+    state.plan = expandPlan(payload.plan);
+    savePlan();
+    state.nextDayIndex = 0;
+    saveNextDay();
+    history.replaceState({}, "", location.pathname);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 const root = document.getElementById("app");
 
 function el(tag, attrs = {}, children = []) {
@@ -665,6 +730,19 @@ function renderSettings() {
   }, "Editar perfil completo"));
 
   container.appendChild(el("button", {
+    class: "btn-secondary big",
+    onclick: async () => {
+      const link = buildShareLink();
+      try {
+        await navigator.clipboard.writeText(link);
+        alert("Link copiado. Abrilo en tu otro celular (una sola vez) para copiar esta misma rutina ahí.");
+      } catch (e) {
+        prompt("Copiá este link y abrilo en tu otro celular para copiar esta misma rutina ahí:", link);
+      }
+    },
+  }, "📤 Compartir/copiar mi rutina a otro celular"));
+
+  container.appendChild(el("button", {
     class: "btn-danger big",
     onclick: () => {
       if (confirm("Esto borra todo: perfil, rutina e historial. ¿Estás seguro?")) {
@@ -721,7 +799,8 @@ function render() {
 /* ---------------- INIT ---------------- */
 
 function init() {
-  if (state.profile && state.plan) {
+  const loadedShared = tryLoadSharedRoutine();
+  if (loadedShared || (state.profile && state.plan)) {
     state.view = "home";
   } else {
     state.view = "onboarding";
