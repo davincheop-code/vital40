@@ -40,13 +40,14 @@ function toBase64Unicode(str) { return btoa(unescape(encodeURIComponent(str))); 
 function fromBase64Unicode(str) { return decodeURIComponent(escape(atob(str))); }
 
 function compactPlan(plan) {
+  // Claves cortas a propósito: esto viaja en la URL del link para compartir,
+  // así que cuanto más corto, mejor (menos caracteres para copiar/escanear).
   return {
-    createdAt: plan.createdAt,
-    days: plan.days.map((d) => ({
-      day: d.day, type: d.type, label: d.label,
-      warmup: d.warmup.map((e) => e.id),
-      main: d.main.map((e) => ({ id: e.id, sets: e.sets, reps: e.reps, rest: e.rest })),
-      cooldown: d.cooldown.map((e) => e.id),
+    d: plan.days.map((d) => ({
+      y: d.day, t: d.type, l: d.label,
+      w: d.warmup.map((e) => e.id),
+      m: d.main.map((e) => [e.id, e.sets, e.reps, e.rest]),
+      c: d.cooldown.map((e) => e.id),
     })),
   };
 }
@@ -55,12 +56,11 @@ function expandPlan(compact) {
   const byId = {};
   EXERCISES.forEach((e) => { byId[e.id] = e; });
   return {
-    createdAt: compact.createdAt,
-    days: compact.days.map((d) => ({
-      day: d.day, type: d.type, label: d.label,
-      warmup: d.warmup.map((id) => byId[id]).filter(Boolean),
-      main: d.main.map((m) => (byId[m.id] ? { ...byId[m.id], sets: m.sets, reps: m.reps, rest: m.rest } : null)).filter(Boolean),
-      cooldown: d.cooldown.map((id) => byId[id]).filter(Boolean),
+    days: compact.d.map((d) => ({
+      day: d.y, type: d.t, label: d.l,
+      warmup: d.w.map((id) => byId[id]).filter(Boolean),
+      main: d.m.map(([id, sets, reps, rest]) => (byId[id] ? { ...byId[id], sets, reps, rest } : null)).filter(Boolean),
+      cooldown: d.c.map((id) => byId[id]).filter(Boolean),
     })),
   };
 }
