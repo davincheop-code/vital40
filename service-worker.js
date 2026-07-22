@@ -1,7 +1,7 @@
 // Subí este número cada vez que cambies el contenido de la app: es lo que
 // hace que el navegador detecte el service worker como "nuevo" y refresque
 // la caché en vez de seguir sirviendo la versión vieja para siempre.
-const CACHE_NAME = "vital40-cache-v3";
+const CACHE_NAME = "vital40-cache-v4";
 const ASSETS = [
   "./",
   "./index.html",
