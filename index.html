@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Vital40 — Entrenamiento 40+</title>
+<meta name="description" content="Rutinas de entrenamiento personalizadas para hombres y mujeres mayores de 40 años." />
+<meta name="theme-color" content="#0E7C5A" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Vital40" />
+<style>
+  :root {
+    --green: #0E7C5A;
+    --green-dark: #0A5C43;
+    --coral: #FF6B45;
+    --coral-dark: #E4522F;
+    --gold: #FFB627;
+    --bg: #FAF7F2;
+    --card: #FFFFFF;
+    --text: #1B1B1B;
+    --muted: #5B5B5B;
+    --danger: #B3261E;
+    --radius: 16px;
+    --grad-cta: linear-gradient(135deg, #FF8A5B 0%, #FF6B45 55%, #E4522F 100%);
+    --grad-hero: linear-gradient(135deg, #0E7C5A 0%, #0B9C7A 55%, #14B8A6 100%);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.45;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 90px;
+  }
+  #app { max-width: 520px; margin: 0 auto; padding: 20px 18px; }
+
+  h1 { font-size: 26px; margin: 4px 0 16px; }
+  h2 { font-size: 22px; margin: 0 0 10px; }
+  h3 { font-size: 18px; margin: 0; }
+  p { margin: 0 0 10px; }
+  .hint { color: var(--muted); font-size: 16px; }
+  .eyebrow { color: var(--green); font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .target { font-weight: 600; }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card.highlight { border: none; background: var(--grad-hero); color: white; box-shadow: 0 8px 20px rgba(14,124,90,0.35); }
+  .card.highlight .eyebrow { color: #D9FFF3; }
+  .card.highlight .hint { color: #E4FFF6; }
+  .card.highlight h2 { color: white; }
+  .card.center { text-align: center; }
+  .card.tip { background: linear-gradient(135deg, #FFF3E9, #FFE8D6); border: 1px solid #FFD9B8; }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary, .btn-secondary, .btn-danger {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 10px;
+    min-height: 54px;
+  }
+  .btn-primary { background: var(--grad-cta); color: white; box-shadow: 0 6px 16px rgba(228,82,47,0.35); }
+  .btn-primary.big { font-size: 19px; padding: 18px; }
+  .btn-primary.disabled { opacity: 0.4; pointer-events: none; box-shadow: none; }
+  .btn-secondary { background: #FFFFFF; color: var(--text); border: 2px solid #E4E4DE; }
+  .card.highlight .btn-secondary { background: rgba(255,255,255,0.92); border: none; color: var(--green-dark); }
+  .btn-secondary.big { font-size: 19px; padding: 18px; }
+  .btn-danger { background: #FBEAEA; color: var(--danger); }
+  .btn-danger.big { font-size: 18px; padding: 16px; }
+  .link-btn { background: none; color: var(--muted); font-size: 16px; padding: 6px 0; }
+
+  .nav-buttons { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; }
+  .nav-buttons .btn-primary, .nav-buttons .btn-secondary { width: auto; flex: 1; }
+
+  .progress-bar { height: 6px; background: #E4E4DE; border-radius: 6px; margin-bottom: 20px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--grad-cta); transition: width 0.2s; }
+
+  .option-group { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .option-btn {
+    background: var(--card);
+    border: 2px solid #DDDDD5;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 17px;
+    text-align: left;
+    min-height: 54px;
+  }
+  .option-btn.active { border-color: var(--coral); background: #FFF1EB; font-weight: 700; color: var(--coral-dark); }
+
+  .summary-list { list-style: none; padding: 0; margin: 0 0 16px; }
+  .summary-list li { padding: 8px 0; border-bottom: 1px solid #EEEEE8; }
+
+  .hero {
+    background: var(--grad-hero);
+    color: white;
+    margin: -20px -18px 18px;
+    padding: 28px 18px 22px;
+    border-radius: 0 0 28px 28px;
+    box-shadow: 0 8px 20px rgba(14,124,90,0.25);
+  }
+  .hero h1 { margin-bottom: 4px; color: white; }
+  .hero .hint { color: rgba(255,255,255,0.85); }
+  .stats-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .stat-card { flex: 1; background: var(--card); border-radius: 14px; padding: 14px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-bottom: 3px solid var(--coral); }
+  .stat-value { font-size: 26px; font-weight: 800; color: var(--coral-dark); }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .workout-header { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+  .workout-header h3 { font-size: 20px; }
+
+  .checklist { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+  .check-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px; border-radius: 10px; background: #FAFAF6; }
+  .check-row input[type="checkbox"] { width: 26px; height: 26px; margin-top: 2px; accent-color: var(--green); }
+  .ex-name { font-weight: 700; }
+  .ex-cue { color: var(--muted); font-size: 15px; }
+
+  .sets-wrap { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .set-row { display: flex; align-items: center; gap: 8px; background: #FAFAF6; border-radius: 12px; padding: 10px; }
+  .set-row.done { background: #EAF3F0; }
+  .set-num { flex: 0 0 68px; font-weight: 600; font-size: 15px; }
+  .mini-input { width: 64px; padding: 10px 6px; border-radius: 8px; border: 1px solid #DDDDD5; font-size: 16px; text-align: center; }
+  .btn-check { margin-left: auto; background: var(--green); color: white; border-radius: 10px; padding: 12px 16px; font-weight: 700; min-width: 64px; }
+  .btn-check.checked { background: var(--green-dark); }
+
+  .rest-overlay {
+    position: fixed; inset: 0; background: rgba(20, 60, 50, 0.97);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 1000; color: white; gap: 14px;
+  }
+  .rest-label { font-size: 20px; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; }
+  .rest-time { font-size: 72px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .rest-overlay .btn-secondary { width: auto; padding: 14px 26px; }
+
+  .big-emoji { font-size: 56px; margin-bottom: 8px; }
+
+  .history-list { display: flex; flex-direction: column; gap: 12px; }
+  .history-item .history-date { color: var(--green); font-weight: 700; text-transform: capitalize; margin-bottom: 4px; }
+
+  .navbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 1px solid #EAEAE4;
+    display: flex; justify-content: space-around;
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    max-width: 520px; margin: 0 auto;
+  }
+  .nav-item { background: none; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 14px; color: var(--muted); border-radius: 10px; }
+  .nav-item.active { color: var(--green); font-weight: 700; }
+  .nav-icon { font-size: 22px; }
+  .nav-label { font-size: 12px; }
+
+  #install-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+    background: var(--green); color: white; text-align: center;
+    padding: 10px 14px; font-size: 15px;
+  }
+  #install-btn { background: white; color: var(--green); border-radius: 8px; padding: 8px 14px; font-weight: 700; margin-left: 10px; }
+  .hidden { display: none !important; }
+
+  b { color: var(--text); }
+
+  /* ---- badges / info button ---- */
+  .badge {
+    display: inline-block; padding: 5px 12px; border-radius: 999px;
+    font-size: 13px; font-weight: 700; white-space: nowrap;
+  }
+  .info-btn {
+    width: 30px; height: 30px; min-height: 0; flex: 0 0 auto;
+    border-radius: 50%; background: #EFEFE8; color: var(--muted);
+    font-style: italic; font-family: Georgia, serif; font-size: 15px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .ex-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .ex-title-row h2 { flex: 1; }
+  .check-row-body { flex: 1; }
+
+  /* ---- modal "cómo se hace" / selector de alternativas ---- */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(20,20,20,0.55);
+    display: flex; align-items: flex-end; justify-content: center;
+    z-index: 1100; padding: 0;
+  }
+  .modal-card {
+    background: var(--card); width: 100%; max-width: 520px;
+    border-radius: 24px 24px 0 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+    max-height: 82vh; overflow-y: auto;
+    box-shadow: 0 -8px 30px rgba(0,0,0,0.25);
+  }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .modal-close { background: #EFEFE8; color: var(--text); width: 32px; height: 32px; min-height: 0; border-radius: 50%; padding: 0; font-size: 15px; }
+  .steps-list { margin: 10px 0; padding-left: 22px; }
+  .steps-list li { margin-bottom: 8px; }
+  .cue-box { background: #FFF7E6; border: 1px solid #FFE3A3; border-radius: 12px; padding: 12px 14px; margin: 10px 0 16px; font-size: 15px; }
+
+  /* ---- vista previa de rutina ---- */
+  .preview-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 12px 0; border-bottom: 1px solid #F0F0EA;
+  }
+  .preview-row:last-child { border-bottom: none; }
+  .preview-row-main { flex: 1; min-width: 0; }
+  .preview-row-top { margin-bottom: 4px; }
+  .preview-row-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .swap-btn {
+    background: #FFF1EB; color: var(--coral-dark); border: 1.5px solid var(--coral);
+    border-radius: 10px; padding: 8px 12px; font-weight: 700; font-size: 14px; min-height: 0;
+  }
+  .alt-list { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+  .alt-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid #F0F0EA; }
+  .alt-row:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+  <div id="install-banner" class="hidden">
+    Instalá Vital40 en tu celular
+    <button id="install-btn" class="hidden">Instalar</button>
+  </div>
+  <div id="app"></div>
+
+  <script src="./exercises.js"></script>
+  <script src="./app.js"></script>
+  <script>
+    window.addEventListener("beforeinstallprompt", () => {
+      document.getElementById("install-banner").classList.remove("hidden");
+    });
+  </script>
+</body>
+</html>
